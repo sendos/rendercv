@@ -119,6 +119,8 @@ class TypstFile(TemplatedFile):
         # All the template field names:
         all_template_names = [
             "main_column_first_row_template",
+            "main_column_first_row_alt1_template", # sendos
+            "main_column_first_row_alt2_template", # sendos
             "main_column_second_row_template",
             "main_column_second_row_without_url_template",
             "main_column_second_row_without_journal_template",

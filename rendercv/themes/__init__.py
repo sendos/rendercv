@@ -6,6 +6,7 @@ models for the themes.
 from .classic import ClassicThemeOptions
 from .engineeringclassic import EngineeringclassicThemeOptions
 from .engineeringresumes import EngineeringresumesThemeOptions
+from .sendosclassic import SendosclassicThemeOptions # sendos added
 from .moderncv import ModerncvThemeOptions
 from .sb2nov import Sb2novThemeOptions
 
@@ -15,4 +16,5 @@ __all__ = [
     "EngineeringresumesThemeOptions",
     "ModerncvThemeOptions",
     "Sb2novThemeOptions",
+    "SendosclassicThemeOptions",   # sendos added
 ]

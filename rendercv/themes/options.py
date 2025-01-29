@@ -618,11 +618,38 @@ experience_entry_main_column_first_row_template_field_info = pydantic.Field(
     ),
 )
 
+experience_entry_main_column_first_row_alt1_template_field_info = pydantic.Field(
+    default="**COMPANY**",
+    title="Main Column, First Row: Alt1",
+    description=(
+        "The content of the Main Column. The available placeholders are all the keys"
+        " used in the entries (in uppercase)."
+    ),
+)
+
+experience_entry_main_column_first_row_alt2_template_field_info = pydantic.Field(
+    default="_POSITION_",
+    title="Main Column, First Row: Alt2",
+    description=(
+        "The content of the Main Column. The available placeholders are all the keys"
+        " used in the entries (in uppercase)."
+    ),
+)
+
 
 class ExperienceEntryBase(RenderCVBaseModelWithoutExtraKeys):
     main_column_first_row_template: str = (
         experience_entry_main_column_first_row_template_field_info
     )
+    main_column_first_row_alt1_template: str = (
+        experience_entry_main_column_first_row_alt1_template_field_info
+    )
+    main_column_first_row_alt2_template: str = (
+        experience_entry_main_column_first_row_alt2_template_field_info
+    )
+    is_company_with_multiple_positions: bool = False
+    is_position_in_multi_position_company: bool = False
+    
 
 
 class ExperienceEntry(EntryBaseWithDate, ExperienceEntryBase):
