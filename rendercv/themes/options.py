@@ -9,7 +9,6 @@ from typing import Annotated, Literal, Optional
 
 import pydantic
 import pydantic_extra_types.color as pydantic_color
-import rendercv_fonts
 
 from ..data.models.base import RenderCVBaseModelWithoutExtraKeys
 
@@ -33,7 +32,21 @@ available_font_families = [
     "Libertinus Serif",
     "New Computer Modern",
     "DejaVu Sans Mono",
-    *rendercv_fonts.available_font_families,
+    "Mukta",
+    "Open Sans",
+    "Gentium Book Plus",
+    "Noto Sans",
+    "Lato",
+    "Source Sans 3",
+    "EB Garamond",
+    "Open Sauce Sans",
+    "Font Awesome 6",
+    "Fontin",
+    "Roboto",
+    "Ubuntu",
+    "Poppins",
+    "Raleway",
+    "XCharter",
 ]
 available_font_families.remove("Font Awesome 6")
 FontFamily = Literal[tuple(available_font_families)]
