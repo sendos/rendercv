@@ -142,6 +142,22 @@ def cli_command_render(
             help="Automatically re-run RenderCV when the input file is updated",
         ),
     ] = False,
+    group_company_positions: Annotated[
+        bool,
+        typer.Option(
+            "--group_company_positions",
+            "-grp",
+            help="Group mutliple positions at the same company.",
+        ),
+    ] = False,
+    show_dates_at_company_level: Annotated[
+        bool,
+        typer.Option(
+            "--show_dates_at_company_level",
+            "-sdc",
+            help="Show Dates at Company Level when using group_company_positions = \"true\".",
+        ),
+    ] = False,
     # This is a dummy argument for the help message for
     # extra_data_model_override_argumets:
     _: Annotated[

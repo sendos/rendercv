@@ -67,10 +67,24 @@ o.experience_entry_main_column_first_row_template_field_info.default = (
     "**POSITION**\n*COMPANY*"
 )
 
+o.experience_entry_main_column_first_row_company_only_template_field_info.default = (
+    "**COMPANY**"
+)
+
+o.experience_entry_main_column_first_row_position_only_template_field_info.default = (
+    "_POSITION_"
+)
+
 
 class ExperienceEntry(o.ExperienceEntry):
     main_column_first_row_template: str = (
         o.experience_entry_main_column_first_row_template_field_info
+    )
+    main_column_first_row_company_only_template: str = (
+        o.experience_entry_main_column_first_row_company_only_template_field_info
+    )
+    main_column_first_row_position_only_template: str = (
+        o.experience_entry_main_column_first_row_position_only_template_field_info
     )
     date_and_location_column_template: str = (
         o.entry_base_with_date_date_and_location_column_template_field_info

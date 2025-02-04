@@ -1071,6 +1071,18 @@
           "description": "A boolean value to determine whether to re-run RenderCV when the inputfile is updated. The default value is \"false\".",
           "title": "Re-run RenderCV When the Input File is Updated",
           "type": "boolean"
+        },
+        "group_company_positions": {
+          "default": false,
+          "description": "Group mutliple positions at the same company. The default value is \"false\".",
+          "title": "Group Company Positions",
+          "type": "boolean"
+        },
+        "show_dates_at_company_level": {
+          "default": false,
+          "description": "Show Dates at Company Level when using group_company_positions = \"true\". The default value is \"false\".",
+          "title": "Show Dates at Company Level",
+          "type": "boolean"
         }
       },
       "title": "RenderCommandSettings",

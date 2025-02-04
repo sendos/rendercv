@@ -121,6 +121,13 @@ o.experience_entry_main_column_first_row_template_field_info.default = (
     "**POSITION**, COMPANY -- LOCATION"
 )
 
+o.experience_entry_main_column_first_row_company_only_template_field_info.default = (
+    "**COMPANY**"
+)
+
+o.experience_entry_main_column_first_row_position_only_template_field_info.default = (
+    "_POSITION_ -- LOCATION"
+)
 
 class ExperienceEntry(o.ExperienceEntry):
     main_column_first_row_template: str = (

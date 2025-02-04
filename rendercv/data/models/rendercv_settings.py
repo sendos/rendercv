@@ -156,6 +156,22 @@ class RenderCommandSettings(RenderCVBaseModelWithoutExtraKeys):
         ),
     )
 
+    group_company_positions: bool = pydantic.Field(
+        default=False,
+        title="Group Company Positions",
+        description=(
+            'Group mutliple positions at the same company. The default value is "false".'
+        ),
+    )
+
+    show_dates_at_company_level: bool = pydantic.Field(
+        default=False,
+        title="Show Dates at Company Level",
+        description=(
+            'Show Dates at Company Level when using group_company_positions = "true". The default value is "false".'
+        ),
+    )
+
     @pydantic.field_validator(
         "output_folder_name",
         mode="before",

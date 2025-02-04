@@ -2,9 +2,9 @@
 #two-col-entry(
   left-content: [
     ((* if entry.is_company_with_multiple_positions *))
-        <<main_column_first_row_alt1_template>>
+        <<main_column_first_row_company_only_template>>
     ((* elif entry.is_position_in_multi_position_company *))
-        <<main_column_first_row_alt2_template>>
+        <<main_column_first_row_position_only_template>>
     ((* else *))
         <<main_column_first_row_template>>
     ((* endif *))
@@ -33,9 +33,9 @@
 #one-col-entry(
   content: [
     ((* if entry.is_company_with_multiple_positions *))
-        <<main_column_first_row_alt1_template>>
+        <<main_column_first_row_company_only_template>>
     ((* elif entry.is_position_in_multi_position_company *))
-        <<main_column_first_row_alt2_template>>
+        <<main_column_first_row_position_only_template>>
     ((* else *))
         <<main_column_first_row_template>>
     ((* endif *))

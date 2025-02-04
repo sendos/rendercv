@@ -2,6 +2,7 @@
 The `rendercv.cli.utilities` module contains utility functions that are required by CLI.
 """
 
+import copy
 import inspect
 import json
 import os
@@ -282,17 +283,17 @@ def update_render_command_settings_of_the_input_file(
     return input_file_as_a_dict
 
 
-# sendos: new function modify_multiple_positions_per_company()
-import copy
-def modify_multiple_positions_per_company(data_model):
+def modify_multiple_positions_per_company(data_model, show_dates_at_company_level=False):
     # This takes into account companies for which there are multiple positions, in the following way:
     # x is an array of ExperienceEntry's from data_model.cv.sections_input['experience']
     #
     # This function goes over the elements of array x and
     # (1) If there is only one entry with a certain company, then leave it alone
     # (2) If there are 2 or more contiguous entries with the same company, then
-    #     (a) Insert a new element in x that has 'company' equal to the above company, and position equal to '__MULTIPLE_POSITIONS__'
-    #     (b) Change the existing elements of this company to have 'company' equal to '__POSITION__'
+    #     (a) Insert a new element in x that has 'company' equal to the above company, 
+    #         position = None, and is_company_with_multiple_positions = True
+    #     (b) Change the existing elements of this company to have company = None, 
+    #         and is_position_in_multi_position_company = True
 
     x = data_model.cv.sections_input['experience']
     
@@ -314,16 +315,16 @@ def modify_multiple_positions_per_company(data_model):
         if count > 1:
             # Insert the new entry
             tmp_entry = copy.deepcopy(x[start])
-            tmp_entry.position = '__MULTIPLE_POSITIONS__'
+            tmp_entry.position = None
             tmp_entry.location = None
-            if 0:
-                # Use this to not show start and end dates at the company level
-                tmp_entry.start_date = None
-                tmp_entry.end_date = None
-            else:
+            if show_dates_at_company_level:
                 # Use this to show start and end dates at the company level
                 tmp_entry.start_date = current_start_date
                 tmp_entry.end_date = current_end_date
+            else:
+                # Use this to not show start and end dates at the company level
+                tmp_entry.start_date = None
+                tmp_entry.end_date = None
             
             tmp_entry.highlights = None
             tmp_entry.is_company_with_multiple_positions = True
@@ -332,8 +333,7 @@ def modify_multiple_positions_per_company(data_model):
             
             # Modify existing entries
             for j in range(start + 1, start + 1 + count):
-                x[j].company = x[j].position
-                x[j].position = '__POSITION__'
+                x[j].company = None
                 x[j].is_company_with_multiple_positions = False
                 x[j].is_position_in_multi_position_company = True
             
@@ -388,8 +388,11 @@ def run_rendercv_with_printer(
             context={"input_file_directory": input_file_path.parent},
         )
 
-        # Modify the data model to take into account multiple roles per company # sendos
-        data_model = modify_multiple_positions_per_company(data_model)
+        group_company_positions = render_command_settings_dict["group_company_positions"]
+        if group_company_positions:
+            printer.information("Modifying the data model to take into account multiple roles per company")
+            show_dates_at_company_level = render_command_settings_dict["show_dates_at_company_level"]
+            data_model = modify_multiple_positions_per_company(data_model, show_dates_at_company_level)
         
         # Change the current working directory to the input file's directory (because
         # the template overrides are looked up in the current working directory). The

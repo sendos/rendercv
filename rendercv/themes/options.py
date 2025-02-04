@@ -618,7 +618,7 @@ experience_entry_main_column_first_row_template_field_info = pydantic.Field(
     ),
 )
 
-experience_entry_main_column_first_row_alt1_template_field_info = pydantic.Field(
+experience_entry_main_column_first_row_company_only_template_field_info = pydantic.Field(
     default="**COMPANY**",
     title="Main Column, First Row: Alt1",
     description=(
@@ -627,7 +627,7 @@ experience_entry_main_column_first_row_alt1_template_field_info = pydantic.Field
     ),
 )
 
-experience_entry_main_column_first_row_alt2_template_field_info = pydantic.Field(
+experience_entry_main_column_first_row_position_only_template_field_info = pydantic.Field(
     default="_POSITION_",
     title="Main Column, First Row: Alt2",
     description=(
@@ -641,11 +641,11 @@ class ExperienceEntryBase(RenderCVBaseModelWithoutExtraKeys):
     main_column_first_row_template: str = (
         experience_entry_main_column_first_row_template_field_info
     )
-    main_column_first_row_alt1_template: str = (
-        experience_entry_main_column_first_row_alt1_template_field_info
+    main_column_first_row_company_only_template: str = (
+        experience_entry_main_column_first_row_company_only_template_field_info
     )
-    main_column_first_row_alt2_template: str = (
-        experience_entry_main_column_first_row_alt2_template_field_info
+    main_column_first_row_position_only_template: str = (
+        experience_entry_main_column_first_row_position_only_template_field_info
     )
     is_company_with_multiple_positions: bool = False
     is_position_in_multi_position_company: bool = False

@@ -438,6 +438,8 @@ rendercv_settings:
     dont_generate_html: false 
     dont_generate_markdown: false 
     dont_generate_png: false 
+    group_company_positions: false
+    show_dates_at_company_level: false
 ```
 
 1. This field is used for time span calculations and last updated date text.

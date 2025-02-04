@@ -36,6 +36,7 @@ class TemplatedFile:
         self.design = data_model.design
         self.locale = data_model.locale
         self.environment = environment
+        self.settings = data_model.rendercv_settings
 
     def template(
         self,
@@ -116,11 +117,12 @@ class TypstFile(TemplatedFile):
         Returns:
             The preamble, header, and sections of the Typst file.
         """
+
         # All the template field names:
         all_template_names = [
             "main_column_first_row_template",
-            "main_column_first_row_alt1_template", # sendos
-            "main_column_first_row_alt2_template", # sendos
+            "main_column_first_row_company_only_template",
+            "main_column_first_row_position_only_template",
             "main_column_second_row_template",
             "main_column_second_row_without_url_template",
             "main_column_second_row_without_journal_template",
@@ -128,6 +130,8 @@ class TypstFile(TemplatedFile):
             "template",
             "degree_column_template",
         ]
+
+        DEBUG = 0
 
         # All the placeholders used in the templates:
         sections_input: dict[str, list[pydantic.BaseModel]] = self.cv.sections_input  # type: ignore
@@ -142,6 +146,8 @@ class TypstFile(TemplatedFile):
                     for key in entry_dictionary:
                         placeholder_keys.add(key.upper())
 
+        if DEBUG: print(f"\n\nDEBUG: {placeholder_keys=}")
+
         pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
         def camel_to_snake(name: str) -> str:
@@ -152,6 +158,8 @@ class TypstFile(TemplatedFile):
         header = self.template("Header")
         sections: list[tuple[str, list[str], str]] = []
         for section in self.cv.sections:
+            if DEBUG: print(f"\n\tDEBUG: Inside {section=}")
+
             section_beginning = self.template(
                 "SectionBeginning",
                 section_title=escape_typst_characters(section.title),
@@ -171,8 +179,24 @@ class TypstFile(TemplatedFile):
                 for template_name in all_template_names
             }
 
+            group_company_positions = self.settings.render_command.group_company_positions
+            main_column_first_row_template = templates["main_column_first_row_template"]
+            if section.entry_type == "ExperienceEntry" and group_company_positions:        
+                if re.search(r"POSITION.*COMPANY", str(main_column_first_row_template), re.DOTALL):
+                    # If we are grouping company positions, we need to swap COMPANY and POSITION to ensure that the company is displayed first.
+                    templates["main_column_first_row_template"] = re.sub(r'^(.*)POSITION(.+)COMPANY(.*)$',r'\1COMPANY\2POSITION\3',
+                                                                         str(main_column_first_row_template), flags=re.DOTALL)
+                    if DEBUG: print(f"Swapped: {main_column_first_row_template=}, new: {templates['main_column_first_row_template']=}")
+                else:
+                    if DEBUG: print(f"Not swapped: {main_column_first_row_template=}, new: {templates['main_column_first_row_template']=}")
+            else:
+                if DEBUG: print(f"Leaving alone: {section.entry_type=} : {main_column_first_row_template=}")
+
+            if DEBUG: print(f"\n\tDEBUG: {templates=}")
+
             entries: list[str] = []
             for i, entry in enumerate(section.entries):
+                if DEBUG: print(f"\n\n\t\tDEBUG: Inside {entry=}")
                 # Prepare placeholders:
                 placeholders = {}
                 for placeholder_key in placeholder_keys:
@@ -197,6 +221,8 @@ class TypstFile(TemplatedFile):
                         placeholder_value if placeholder_value != "None" else None
                     )
 
+                if DEBUG: print(f"\n\t\tDEBUG: {placeholders=}")
+
                 # Substitute the placeholders in the templates:
                 templates_with_substitutions = {
                     template_name: (
@@ -209,6 +235,8 @@ class TypstFile(TemplatedFile):
                     )
                     for template_name in all_template_names
                 }
+
+                if DEBUG: print(f"\n\t\tDEBUG: {templates_with_substitutions=}")
 
                 entries.append(
                     self.template(
