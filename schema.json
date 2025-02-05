@@ -1073,8 +1073,8 @@
           "type": "boolean"
         },
         "group_company_positions": {
-          "default": false,
-          "description": "Group mutliple positions at the same company. The default value is \"false\".",
+          "default": true,
+          "description": "Group mutliple positions at the same company. The default value is \"true\".",
           "title": "Group Company Positions",
           "type": "boolean"
         },

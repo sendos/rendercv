@@ -438,7 +438,7 @@ rendercv_settings:
     dont_generate_html: false 
     dont_generate_markdown: false 
     dont_generate_png: false 
-    group_company_positions: false
+    group_company_positions: true
     show_dates_at_company_level: false
 ```
 

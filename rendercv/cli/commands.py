@@ -145,11 +145,14 @@ def cli_command_render(
     group_company_positions: Annotated[
         bool,
         typer.Option(
-            "--group_company_positions",
-            "-grp",
-            help="Group mutliple positions at the same company.",
+            "--dont_group_company_positions",
+            "-nogrp",
+            help="Don't group mutliple positions at the same company.",
+            is_flag=True,
+            flag_value=False, # This negates the output of the flag so that
+                              # group_company_positions is false when this is true
         ),
-    ] = False,
+    ] = True,
     show_dates_at_company_level: Annotated[
         bool,
         typer.Option(

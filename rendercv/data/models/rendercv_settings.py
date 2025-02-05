@@ -157,10 +157,10 @@ class RenderCommandSettings(RenderCVBaseModelWithoutExtraKeys):
     )
 
     group_company_positions: bool = pydantic.Field(
-        default=False,
+        default=True,
         title="Group Company Positions",
         description=(
-            'Group mutliple positions at the same company. The default value is "false".'
+            'Group mutliple positions at the same company. The default value is "true".'
         ),
     )
 
