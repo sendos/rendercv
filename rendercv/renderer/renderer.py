@@ -106,7 +106,10 @@ def create_a_typst_file(
     if not output_directory.is_dir():
         output_directory.mkdir(parents=True)
 
-    file_name = f"{str(rendercv_data_model.cv.name).replace(' ', '_')}_CV.typ"
+    name_without_typst_commands = templater.remove_typst_commands(
+        str(rendercv_data_model.cv.name)
+    )
+    file_name = f"{name_without_typst_commands.replace(' ', '_')}_CV.typ"
     file_path = output_directory / file_name
     file_path.write_text(typst_contents, encoding="utf-8")
 
@@ -251,15 +254,11 @@ def render_pngs_from_typst(
     """
     typst_compiler = TypstCompiler(file_path)
     output_path = file_path.parent / (file_path.stem + "_{p}.png")
-    output = typst_compiler.run(format="png", ppi=ppi, output=output_path)
+    typst_compiler.run(format="png", ppi=ppi, output=output_path)
 
-    if isinstance(output, list):
-        return [
-            output_path.parent / output_path.name.format(p=i)
-            for i in range(len(output))
-        ]
-
-    return [output_path.parent / output_path.name.format(p=1)]
+    # Look at the outtput folder and find the PNG files:
+    png_files = list(output_path.parent.glob(f"{file_path.stem}_*.png"))
+    return sorted(png_files, key=lambda x: int(x.stem.split("_")[-1]))
 
 
 def render_an_html_from_markdown(markdown_file_path: pathlib.Path) -> pathlib.Path:

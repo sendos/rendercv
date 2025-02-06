@@ -8,7 +8,7 @@ import copy
 import pathlib
 import re
 from collections.abc import Callable
-from typing import Optional
+from typing import Optional, overload
 
 import jinja2
 import pydantic
@@ -111,7 +111,9 @@ class TypstFile(TemplatedFile):
 
         super().__init__(typst_file_data_model, environment)
 
-    def render_templates(self) -> tuple[str, str, list[tuple[str, list[str], str]]]:
+    def render_templates(
+        self,
+    ) -> tuple[str, str, list[tuple[str, list[str], str, str]]]:
         """Render and return all the templates for the Typst file.
 
         Returns:
@@ -156,7 +158,7 @@ class TypstFile(TemplatedFile):
         # Template the preamble, header, and sections:
         preamble = self.template("Preamble")
         header = self.template("Header")
-        sections: list[tuple[str, list[str], str]] = []
+        sections: list[tuple[str, list[str], str, str]] = []
         for section in self.cv.sections:
             if DEBUG: print(f"\n\tDEBUG: Inside {section=}")
 
@@ -253,7 +255,9 @@ class TypstFile(TemplatedFile):
                 section_title=section.title,
                 entry_type=section.entry_type,
             )
-            sections.append((section_beginning, entries, section_ending))
+            sections.append(
+                (section_beginning, entries, section_ending, section.entry_type)
+            )
 
         return preamble, header, sections
 
@@ -447,6 +451,33 @@ def input_template_to_typst(
     return output  # noqa: RET504
 
 
+@overload
+def remove_typst_commands(string: None) -> None: ...
+
+
+@overload
+def remove_typst_commands(string: str) -> str: ...
+
+
+def remove_typst_commands(string: Optional[str]) -> Optional[str]:
+    """Remove Typst commands from a string.
+
+    Args:
+        string: The string to remove Typst commands from.
+
+    Returns:
+        The string without Typst commands.
+    """
+    if string:
+        commands = re.findall(r"\#.*?\[.*?\]", string)
+        for command in commands:
+            string = string.replace(command, "")
+
+        return string
+
+    return None
+
+
 def escape_characters(string: str, escape_dictionary: dict[str, str]) -> str:
     """Escape characters in a string by using `escape_dictionary`, where keys are
     characters to escape and values are their escaped versions.
@@ -496,6 +527,11 @@ def escape_characters(string: str, escape_dictionary: dict[str, str]) -> str:
         new_equation = equation.replace("$$", "$")
         new_equations.append(new_equation)
 
+    # If there are Typst commands, don't escape the special characters:
+    commands = re.findall(r"(\#.*?\[.*?\])", string)
+    for i, command in enumerate(commands):
+        string = string.replace(command, f"!!-command{i}-!!")
+
     # Loop through the letters of the sentence and if you find an escape character,
     # replace it with their equivalent:
     string = string.translate(translation_map)
@@ -508,10 +544,22 @@ def escape_characters(string: str, escape_dictionary: dict[str, str]) -> str:
     for i, new_equation in enumerate(new_equations):
         string = string.replace(f"!!-equation{i}-!!", new_equation)
 
+    # Replace !!-command{i}-!!" with the original commands:
+    for i, command in enumerate(commands):
+        string = string.replace(f"!!-command{i}-!!", command)
+
     return string
 
 
-def escape_typst_characters(string: str) -> str:
+@overload
+def escape_typst_characters(string: None) -> None: ...
+
+
+@overload
+def escape_typst_characters(string: str) -> str: ...
+
+
+def escape_typst_characters(string: Optional[str]) -> Optional[str]:
     """Escape Typst characters in a string by adding a backslash before them.
 
     Example:
@@ -527,6 +575,9 @@ def escape_typst_characters(string: str) -> str:
     Returns:
         The escaped string.
     """
+    if string is None:
+        return None
+
     escape_dictionary = {
         "[": "\\[",
         "]": "\\]",
@@ -767,6 +818,7 @@ class Jinja2Environment:
             environment.filters["escape_typst_characters"] = escape_typst_characters
             environment.filters["markdown_to_typst"] = markdown_to_typst
             environment.filters["make_a_url_clean"] = data.make_a_url_clean
+            environment.filters["remove_typst_commands"] = remove_typst_commands
 
             cls.environment = environment
 

@@ -2,15 +2,19 @@ from typing import Literal, Optional
 
 import rendercv.themes.options as o
 
+o.header_name_font_family_field_info.default = "Fontin"
 o.header_name_bold_field_info.default = False
 o.header_name_font_size_field_info = "25pt"
 o.header_alignment_field_info.default = "left"
+o.header_connections_font_family_field_info.default = "Fontin"
 
 
 class Header(o.Header):
+    name_font_family: o.FontFamily = o.header_name_font_family_field_info
     name_font_size: o.TypstDimension = o.header_name_font_size_field_info
     name_bold: bool = o.header_name_bold_field_info
     alignment: o.Alignment = o.header_alignment_field_info
+    connections_font_family: o.FontFamily = o.header_connections_font_family_field_info
 
 
 o.links_underline_field_info.default = True
@@ -22,7 +26,7 @@ class Links(o.Links):
     use_external_link_icon: bool = o.links_use_external_link_icon_field_info
 
 
-o.text_font_family_field_info.default = "XCharter"
+o.text_font_family_field_info.default = "Fontin"
 o.text_leading_field_info.default = "0.6em"
 
 
@@ -37,9 +41,11 @@ o.section_titles_vertical_space_above_field_info.default = "0.55cm"
 o.section_titles_vertical_space_below_field_info.default = "0.3cm"
 o.section_titles_font_size_field_info.default = "1.4em"
 o.section_titles_line_thickness_field_info.default = "0.15cm"
+o.section_titles_font_family_field_info.default = "Fontin"
 
 
 class SectionTitles(o.SectionTitles):
+    font_family: o.FontFamily = o.section_titles_font_family_field_info
     type: o.SectionTitleType = o.section_titles_type_field_info
     vertical_space_above: o.TypstDimension = (
         o.section_titles_vertical_space_above_field_info

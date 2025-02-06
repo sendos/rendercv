@@ -405,7 +405,7 @@ def test_invalid_social_networks(network, username):
         ("LinkedIn", "myusername", "https://linkedin.com/in/myusername"),
         ("GitHub", "myusername", "https://github.com/myusername"),
         ("Instagram", "myusername", "https://instagram.com/myusername"),
-        ("ORCID", "myusername", "https://orcid.org/myusername"),
+        ("ORCID", "0000-0000-0000-0000", "https://orcid.org/0000-0000-0000-0000"),
         ("Mastodon", "@myusername@test.org", "https://test.org/@myusername"),
         (
             "StackOverflow",
@@ -436,6 +436,11 @@ def test_invalid_social_networks(network, username):
             "Telegram",
             "myusername",
             "https://t.me/myusername",
+        ),
+        (
+            "X",
+            "myusername",
+            "https://x.com/myusername",
         ),
     ],
 )
@@ -967,3 +972,17 @@ def test_bold_keywords():
             elif section.title == "test7":
                 assert "**test_keyword_3**" in entry.details
                 assert "**test_keyword_4**" in entry.details
+
+
+def test_none_entries():
+    with pytest.raises(pydantic.ValidationError):
+        data.RenderCVDataModel(
+            cv=data.CurriculumVitae(
+                name="John Doe",
+                sections={
+                    "test": [
+                        None,
+                    ],
+                },
+            )
+        )

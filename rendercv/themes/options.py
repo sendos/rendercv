@@ -28,18 +28,28 @@ TypstDimension = Annotated[
     str,
     pydantic.AfterValidator(validate_typst_dimension),
 ]
-FontFamily = Literal[
+available_font_families = [
     "Libertinus Serif",
     "New Computer Modern",
     "DejaVu Sans Mono",
-    "Source Sans 3",
-    "Roboto",
-    "Open Sans",
-    "Ubuntu",
-    "Noto Sans",
     "Mukta",
+    "Open Sans",
+    "Gentium Book Plus",
+    "Noto Sans",
+    "Lato",
+    "Source Sans 3",
+    "EB Garamond",
+    "Open Sauce Sans",
+    "Font Awesome 6",
+    "Fontin",
+    "Roboto",
+    "Ubuntu",
+    "Poppins",
+    "Raleway",
     "XCharter",
 ]
+available_font_families.remove("Font Awesome 6")
+FontFamily = Literal[tuple(available_font_families)]
 BulletPoint = Literal["•", "◦", "-", "◆", "★", "■", "—", "○"]
 PageSize = Literal[
     "a0",
@@ -178,6 +188,17 @@ class Colors(RenderCVBaseModelWithoutExtraKeys):
         colors_last_updated_date_and_page_numbering_field_info
     )
 
+    @pydantic.field_serializer(
+        "text",
+        "name",
+        "connections",
+        "section_titles",
+        "links",
+        "last_updated_date_and_page_numbering",
+    )
+    def serialize_color(self, value: pydantic_color.Color) -> str:
+        return value.as_rgb()
+
 
 text_font_family_field_info = pydantic.Field(
     default="Source Sans 3",
@@ -236,6 +257,11 @@ class Links(RenderCVBaseModelWithoutExtraKeys):
     use_external_link_icon: bool = links_use_external_link_icon_field_info
 
 
+header_name_font_family_field_info = pydantic.Field(
+    default="Source Sans 3",
+    title="Name Font Family",
+    description="The font family of the name in the header.",
+)
 header_name_font_size_field_info = pydantic.Field(
     default="30pt",
     title="Name Font Size",
@@ -275,6 +301,11 @@ header_separator_between_connections_field_info = pydantic.Field(
     title="Separator Between Connections",
     description="The separator between the connections in the header.",
 )
+header_connections_font_family_field_info = pydantic.Field(
+    default="Source Sans 3",
+    title="Connections Font Family",
+    description="The font family of the connections in the header.",
+)
 header_use_icons_for_connections_field_info = pydantic.Field(
     default=True,
     title="Use Icons for Connections",
@@ -291,6 +322,7 @@ header_alignment_field_info = pydantic.Field(
 
 
 class Header(RenderCVBaseModelWithoutExtraKeys):
+    name_font_family: FontFamily = header_name_font_family_field_info
     name_font_size: TypstDimension = header_name_font_size_field_info
     name_bold: bool = header_name_bold_field_info
     photo_width: TypstDimension = header_photo_width_field_info
@@ -303,11 +335,17 @@ class Header(RenderCVBaseModelWithoutExtraKeys):
     horizontal_space_between_connections: TypstDimension = (
         header_horizontal_space_connections_field_info
     )
+    connections_font_family: FontFamily = header_connections_font_family_field_info
     separator_between_connections: str = header_separator_between_connections_field_info
     use_icons_for_connections: bool = header_use_icons_for_connections_field_info
     alignment: Alignment = header_alignment_field_info
 
 
+section_titles_font_family_field_info = pydantic.Field(
+    default="Source Sans 3",
+    title="Font Family",
+    description="The font family of the section titles.",
+)
 section_titles_font_size_field_info = pydantic.Field(
     default="1.4em",
     title="Font Size",
@@ -347,6 +385,7 @@ section_titles_small_caps_field_info = pydantic.Field(
 
 class SectionTitles(RenderCVBaseModelWithoutExtraKeys):
     type: SectionTitleType = section_titles_type_field_info
+    font_family: FontFamily = section_titles_font_family_field_info
     font_size: TypstDimension = section_titles_font_size_field_info
     bold: bool = section_titles_bold_field_info
     small_caps: bool = section_titles_small_caps_field_info
@@ -378,6 +417,13 @@ entries_vertical_space_between_entries_field_info = pydantic.Field(
     default="1.2em",
     title="Vertical Space Between Entries",
     description="The vertical space between the entries.",
+)
+entries_allow_page_break_in_sections_field_info = pydantic.Field(
+    default=True,
+    title="Allow Page Break in Sections",
+    description=(
+        'If this option is "true", a page break will be allowed in the sections.'
+    ),
 )
 entries_allow_page_break_in_entries_field_info = pydantic.Field(
     default=True,
@@ -412,6 +458,7 @@ class Entries(RenderCVBaseModelWithoutExtraKeys):
     vertical_space_between_entries: TypstDimension = (
         entries_vertical_space_between_entries_field_info
     )
+    allow_page_break_in_sections: bool = entries_allow_page_break_in_sections_field_info
     allow_page_break_in_entries: bool = entries_allow_page_break_in_entries_field_info
     short_second_row: bool = entries_short_second_row_field_info
     show_time_spans_in: list[str] = entries_show_time_spans_in_field_info
