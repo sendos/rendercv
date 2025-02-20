@@ -5,6 +5,7 @@ commands of RenderCV.
 
 import copy
 import pathlib
+import re
 from typing import Annotated, Optional
 
 import typer
@@ -175,7 +176,15 @@ def cli_command_render(
 ):
     """Render a CV from a YAML input file."""
     printer.welcome()
-    original_working_directory = pathlib.Path.cwd()
+    if re.match(r"^[/\\~]", output_folder_name):
+        # If output_folder_name is an absolute path then set top_level_directory accordingly
+        top_level_directory = pathlib.Path(output_folder_name).parent
+        output_folder_name = pathlib.Path(output_folder_name).name
+    else:
+        # If output_folder_name is not an absolute path, then set top_level_directory to
+        # the current working directory and keep output_folder_name as is
+        top_level_directory = pathlib.Path.cwd()
+
     input_file_path = pathlib.Path(input_file_name).absolute()
 
     from . import utilities as u
@@ -201,13 +210,13 @@ def cli_command_render(
                 data.read_a_yaml_file(input_file_path), cli_render_arguments
             )
             u.run_rendercv_with_printer(
-                input_file_as_a_dict, original_working_directory, input_file_path
+                input_file_as_a_dict, top_level_directory, input_file_path
             )
 
         u.run_a_function_if_a_file_changes(input_file_path, run_rendercv)
     else:
         u.run_rendercv_with_printer(
-            input_file_as_a_dict, original_working_directory, input_file_path
+            input_file_as_a_dict, top_level_directory, input_file_path
         )
 
 
